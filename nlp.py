@@ -23,7 +23,7 @@ with open(sys.argv[1], 'r') as file:
         else:
             input.append(line)
 
-#removing stopwords:
+#removing stopwords and punctuation:
 for _ in range(len(input)):
     text = input[_]
     tokens = word_tokenize(text)    #tokenize the sentence
@@ -34,20 +34,11 @@ for _ in range(len(input)):
     tokens_wo_sw contains a list of the sentence tokenized without stopwords.
     """
     tokens_wo_sw = [word for word in tokens if not word in stopwords.words()]
+    #removing puctuation similarly:
+    tokens_wo_punkt = [word for word in tokens_wo_sw if word.isalnum()]
     #Joining the list of tokens without stopwords to create a sentence:
-    new_sentence = (" ").join(tokens_wo_sw)
+    new_sentence = (" ").join(tokens_wo_punkt)
     new_input.append(new_sentence)
-
-#remove punctuation:
-for _ in range(len(new_input)):
-    sentence = new_input[_]
-    words = nltk.word_tokenize(sentence)    #tokenize words in sentence
-    #create a list containing each word in words that only contains alphanumeric characters.
-    new_words=[word for word in words if word.isalnum()]
-    #convert the tokenized sentence into a sentence (without tokens).
-    new_sentence = (" ").join(new_words)
-    #update new_input
-    new_input[_] = new_sentence
 
 for _ in range(len(new_input)):
     print(new_input[_], end="\n")
