@@ -1,8 +1,4 @@
-"""
-Currently working on Task 1 for the NLP project.
-goal is to preprocess the language in the datasets by taking out punctuation and stopwords and 
-preform stemming. 3 functions used in this program are: stem, remove_stopwords, and remove_punctuation. 
-"""
+"""Currently working on Task 1 for the NLP project."""
 import sys
 import nltk
 #need to make sure we install nltk and nltk data to use these functions:
@@ -54,9 +50,7 @@ if __name__ == "__main__":
 
     #removing stopwords and punctuation:
     for _ in range(len(data)):
-        text = data[_]
-        tokens = word_tokenize(text)    #tokenize the sentence
-           
+        tokens = word_tokenize(data[_])    #tokenize the sentence
         """
             tokens without stopwords:
             in the following line I iterate through all the words in the sentence tokens
@@ -68,11 +62,9 @@ if __name__ == "__main__":
             ->tokens_wo_punkt = [word for word in tokens_wo_sw if word.isalnum()]
             ->tokens_wo_sw = [word for word in tokens if not word in stopwords.words()]
         """
-        #tokens_wo_sw = [word for word in tokens if not word in stopwords.words()]
         tokens_wo_sw = remove_stopwords(tokens)
         #removing puctuation similarly:
         tokens_wo_punkt = remove_punctuation(tokens_wo_sw)
-        
         #Joining the list of tokens without stopwords to create a sentence:
         new_sentence = (" ").join(tokens_wo_punkt)
         #new_input will gain modified dataset with removal of stopwords and punctuation
@@ -82,5 +74,4 @@ if __name__ == "__main__":
         user_input = user_input.lower()
 
         #stemming
-        output = stem(user_input)
-        
+        output = stem(user_input) 
