@@ -1,0 +1,3 @@
+In order to use a Jupyter notebook within a pipenv virtual env the following must be run after the venv has been launched:
+
+python -m ipykernel install --user --name=my-virtualenv-name
