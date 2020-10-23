@@ -1,0 +1,166 @@
+import csv
+import os
+
+from enchant import Dict
+from enchant.checker import SpellChecker
+from nltk import download
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem.snowball import EnglishStemmer, ItalianStemmer
+from nltk.tokenize import word_tokenize
+from pathlib import Path
+
+
+def load_data(encoding='latin-1'):
+    cc_files = os.listdir('data/cc/')
+    uc_files = os.listdir('data/uc/')
+
+    cc_dict = {}
+    uc_dict = {}
+
+    for cc in cc_files:
+        # convert contents of cc file to a string then tokenize
+        cc_dict[cc] = word_tokenize(Path('data/cc/'+cc).read_text(encoding=encoding))
+    
+    for uc in uc_files:
+        # convert contents of uc file to a string then tokenize
+        uc_dict[uc] = word_tokenize(Path('data/uc/'+uc).read_text(encoding=encoding))
+
+    return cc_dict, uc_dict
+
+
+def remove_stopwords(token_list, word_list=stopwords.words()):
+    return [token for token in token_list if not token in word_list]
+
+
+def remove_num_punct(token_list):
+    return [token for token in token_list if token.isalnum() and not token.isnumeric()]
+
+
+def stem(token_list, stem_alg):
+    stemmed_tokens = []
+
+    if stem_alg == 'porter':
+        stemmer = PorterStemmer()
+
+        for token in token_list:
+            stemmed_tokens.append(stemmer.stem(token))
+
+    else:
+        d = Dict('it')   # create dictionary for Italian
+        stemmer = EnglishStemmer() # Snowball
+        stemmer_alt = ItalianStemmer() # Snowball
+
+        for token in token_list:
+            if d.check(token):
+                stemmed_tokens.append(stemmer_alt.stem(token))
+            else:
+                stemmed_tokens.append(stemmer.stem(token))
+
+    return stemmed_tokens
+
+
+def concatenate_data(cc_data, uc_data):
+    labeled_list = []
+
+    with open('data/smos_oracle.txt', newline='') as oraclefile:
+        oracle_reader = csv.reader(oraclefile, delimiter=',')
+            
+        for row in oracle_reader:
+            # remove leading whitespace from comma separated values in smos_oracle
+            for i in range(len(row)):
+                row[i] = row[i].lstrip()
+
+            for cc in cc_data.keys():                
+                # if the cc filename w/o extension is in the given smos_oracle row
+                if cc.replace('.txt', '') in row:
+                    for uc in uc_data.keys():
+                        # if the uc filename w/o extension is in the given smos_oracle row
+                        if uc.replace('.txt', '') in row:
+                            label = 1
+                        else:
+                            label = 0
+                        
+                        fname_str = cc + ' ' + uc
+                        data_str = ' '.join(cc_data[cc]) + ' ' + ' '.join(uc_data[uc])
+
+                        # save filename, joined data, and label as a tuple in list   
+                        labeled_list.append((fname_str, data_str, label))
+                    
+                    break
+
+    return labeled_list
+
+
+# cc_data, uc_data,
+def build_vocabulary(str_list,  k):
+    language = {}
+    vocabulary = {'UNK':0,}
+
+    for string in str_list:
+        token_list = word_tokenize(string)
+        for token in token_list:
+            if token in language:
+                language[token] += 1
+            else:
+                language[token] = 1
+
+    '''
+    for cc in cc_data.keys():
+        for token in cc_data[cc]:
+            if token in language:
+                language[token] += 1
+            else:
+                language[token] = 1
+            
+    for uc in uc_data.keys():
+        for token in uc_data[uc]:
+            if token in language:
+                language[token] += 1
+            else:
+                language[token] = 1
+    '''
+
+    #print({key: value for key, value in sorted(language.items(), key=lambda item: item[1])})
+    language = {key: value for key, value in sorted(language.items(), key=lambda item: item[1], reverse=True)}
+    vocabulary.update(dict(list(language.items())[0: k])) 
+
+    return vocabulary
+
+
+if __name__ == "__main__":
+    download('stopwords')
+    download('punkt')
+
+    cc_data, uc_data = load_data() # dictionary of token lists keyed by filename
+
+    user_input = input('Please select stemming algorithm (porter or snowball): ')
+    user_input = user_input.lower()
+
+    for cc in cc_data.keys():
+        cc_data[cc] = remove_stopwords(cc_data[cc])
+        cc_data[cc] = remove_num_punct(cc_data[cc])
+        cc_data[cc] = stem(cc_data[cc], stem_alg=user_input)
+
+    for uc in uc_data.keys():
+        uc_data[uc] = remove_stopwords(uc_data[uc])
+        uc_data[uc] = remove_num_punct(uc_data[uc])
+        uc_data[uc] = stem(uc_data[uc], stem_alg=user_input)
+
+    #build_vocabulary(cc_data, uc_data, 50)
+
+    output_list = concatenate_data(cc_data=cc_data, uc_data=uc_data)
+
+    with open('data/filenames.txt', 'w', newline='') as fnfile:
+        filename_writer = csv.writer(fnfile, quoting=csv.QUOTE_MINIMAL)
+
+        with open('data/data_'+user_input+'.txt', 'w', newline='') as datafile:
+            data_writer = csv.writer(datafile, quoting=csv.QUOTE_MINIMAL)
+
+            with open('data/labels.txt', 'w', newline='') as labelfile:
+                label_writer = csv.writer(labelfile, quoting=csv.QUOTE_MINIMAL)
+    
+                for labeled_link in output_list:
+                    filename_writer.writerow([labeled_link[0]])
+                    data_writer.writerow([labeled_link[1]])
+                    label_writer.writerow([labeled_link[2]])    
