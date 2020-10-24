@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 
 from enchant import Dict
 from enchant.checker import SpellChecker
@@ -11,9 +12,9 @@ from nltk.tokenize import word_tokenize
 from pathlib import Path
 
 
-def load_data(encoding='latin-1'):
-    cc_files = os.listdir('data/cc/')
-    uc_files = os.listdir('data/uc/')
+def load_data(cc_path, uc_path, encoding='latin-1'):
+    cc_files = os.listdir(cc_path)
+    uc_files = os.listdir(uc_path)
 
     cc_dict = {}
     uc_dict = {}
@@ -132,7 +133,8 @@ if __name__ == "__main__":
     download('stopwords')
     download('punkt')
 
-    cc_data, uc_data = load_data() # dictionary of token lists keyed by filename
+    # dictionary of token lists keyed by filename
+    cc_data, uc_data = load_data(sys.argv[1], sys.argv[2])
 
     user_input = input('Please select stemming algorithm (porter or snowball): ')
     user_input = user_input.lower()
