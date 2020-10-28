@@ -20,9 +20,15 @@ def build_vocabulary(str_list,  k):
     return vocabulary
 
 
-def encode(sentence, vocabulary):
-	pass
-
-
-def decode(sentence_list, vocabularys):
-	pass
+def language_size(str_list):
+    language = {}
+    
+    for string in str_list:
+        token_list = string.split()
+        for token in token_list:
+            if token in language:
+                language[token] += 1
+            else:
+                language[token] = 1
+                
+    return len(language.keys())
