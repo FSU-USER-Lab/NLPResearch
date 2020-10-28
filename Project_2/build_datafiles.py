@@ -82,7 +82,7 @@ def concatenate_data(cc_data, uc_data):
                         else:
                             label = 0
                         
-                        fname_str = cc + ' ' + uc
+                        fname_str = cc.strip('.txt') + '_' + uc.strip('.txt')
                         data_str = ' '.join(cc_data[cc]) + ' ' + ' '.join(uc_data[uc])
 
                         # save filename, joined data, and label as a tuple in list   
@@ -91,42 +91,6 @@ def concatenate_data(cc_data, uc_data):
                     break
 
     return labeled_list
-
-
-# cc_data, uc_data,
-def build_vocabulary(str_list,  k):
-    language = {}
-    vocabulary = {'UNK':0,}
-
-    for string in str_list:
-        token_list = word_tokenize(string)
-        for token in token_list:
-            if token in language:
-                language[token] += 1
-            else:
-                language[token] = 1
-
-    '''
-    for cc in cc_data.keys():
-        for token in cc_data[cc]:
-            if token in language:
-                language[token] += 1
-            else:
-                language[token] = 1
-            
-    for uc in uc_data.keys():
-        for token in uc_data[uc]:
-            if token in language:
-                language[token] += 1
-            else:
-                language[token] = 1
-    '''
-
-    #print({key: value for key, value in sorted(language.items(), key=lambda item: item[1])})
-    language = {key: value for key, value in sorted(language.items(), key=lambda item: item[1], reverse=True)}
-    vocabulary.update(dict(list(language.items())[0: k])) 
-
-    return vocabulary
 
 
 if __name__ == "__main__":
@@ -149,9 +113,7 @@ if __name__ == "__main__":
         uc_data[uc] = remove_num_punct(uc_data[uc])
         uc_data[uc] = stem(uc_data[uc], stem_alg=user_input)
 
-    #build_vocabulary(cc_data, uc_data, 50)
-
-    output_list = concatenate_data(cc_data=cc_data, uc_data=uc_data)
+    output_list = concatenate_data(cc_data, uc_data)
 
     with open('data/filenames.txt', 'w', newline='') as fnfile:
         filename_writer = csv.writer(fnfile, quoting=csv.QUOTE_MINIMAL)
