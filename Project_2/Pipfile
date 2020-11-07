@@ -11,6 +11,7 @@ ipykernel = "*"
 pyenchant = "*"
 tensorflow = "*"
 keras = "*"
+imbalanced-learn = "*"
 
 [requires]
 python_version = "3.8"
