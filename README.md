@@ -23,7 +23,7 @@ We need to combine all of the utterances in the files to make a list of all poss
 
 	# from within virtual env
 	# must pass folder paths as arguments
-	python3 build_datafiles.py path-to-cc path-to-uc
+	python3 build_datafiles.py path_to_cc path_to_uc path_to_oracle dataset_name
 
 ## Task 3: 
 
