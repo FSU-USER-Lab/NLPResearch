@@ -1,5 +1,6 @@
 import csv
 import os
+import random
 import sys
 
 from enchant import Dict
@@ -83,7 +84,10 @@ def concatenate_data(cc_data, uc_data, oracle_path):
                             label = 0
                         
                         fname_str = cc.strip('.txt') + '_' + uc.strip('.txt')
-                        data_str = ' '.join(cc_data[cc]) + ' ' + ' '.join(uc_data[uc])
+                        concat_tokens = cc_data[cc] + uc_data[uc]
+                        random.shuffle(concat_tokens)
+                        data_str = ' '.join(concat_tokens)
+                        # data_str = ' '.join(cc_data[cc]) + ' ' + ' '.join(uc_data[uc])
 
                         # save filename, joined data, and label as a tuple in list   
                         labeled_list.append((fname_str, data_str, label))
