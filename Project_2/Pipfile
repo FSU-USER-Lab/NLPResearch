@@ -16,6 +16,8 @@ keras = "*"
 imbalanced-learn = "*"
 tensorflow-addons = "*"
 matplotlib = "*"
+sklearn = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
