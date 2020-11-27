@@ -1,23 +1,13 @@
 def get_vocabulary(str_list):
-    wordID = 1
-    vocabulary = {'UNK': 0, }
+    vocabulary = set()
 
     for string in str_list:
         token_list = string.split()
         for token in token_list:
-            if token not in vocabulary.keys():
-                vocabulary[token] = wordID
-                wordID += 1
+            vocabulary.add(token)
         
-    return vocabulary
+    return list(vocabulary)
 
 
-def vocabulary_size(str_list):
-    vocab = set()
-    
-    for string in str_list:
-        token_list = string.split()
-        for token in token_list:
-            vocab.add(token)
-                
-    return len(vocab)
+def vocabulary_size(str_list):                
+    return len(get_vocabulary(str_list))
