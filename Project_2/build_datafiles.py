@@ -1,19 +1,14 @@
 import csv
-import os
-import random
 import sys
 
-# from enchant import Dict
-# from enchant.checker import SpellChecker
 from nltk import download
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
-# from nltk.stem.snowball import EnglishStemmer, ItalianStemmer
 from nltk.tokenize import word_tokenize
-# from pathlib import Path
+from numpy.random import shuffle
 
 # Loads data for albergate, eanci, etour, itrust, kepler, modis
-# corpus = CC, queries=uc
+# corpora are UCs, queries are CCs
 
 
 def load_data(path, set_name, encoding='latin-1'):
@@ -26,14 +21,14 @@ def load_data(path, set_name, encoding='latin-1'):
         corpora_reader = csv.reader(corporafile, delimiter='\n')
 
         for corpus in corpora_reader:
-            if corpus != []:
+            if not (corpus == [] or corpus == [' ']):
                 data.append(word_tokenize(corpus[0]))
 
     with open(path+set_name+'_CorpusMapping.txt', newline='', encoding=encoding) as mapfile:
         map_reader = csv.reader(mapfile, delimiter='\n')
 
         for filename in map_reader:
-            if filename != []:
+            if not (filename == [] or filename == [' ']):
                 files.append(filename[0])
 
     for filename, contents in zip(files, data):
@@ -46,14 +41,14 @@ def load_data(path, set_name, encoding='latin-1'):
         queries_reader = csv.reader(queriesfile, delimiter='\n')
 
         for query in queries_reader:
-            if query != []:
+            if not (query == [] or query == [' ']):
                 data.append(word_tokenize(query[0]))
 
     with open(path+set_name+'_QueriesMapping.txt', newline='', encoding=encoding) as mapfile:
         map_reader = csv.reader(mapfile, delimiter='\n')
 
         for filename in map_reader:
-            if filename != []:
+            if not (filename == [] or filename == [' ']):
                 files.append(filename[0])
 
     for filename, contents in zip(files, data):
@@ -84,37 +79,107 @@ def concatenate_data(queries_data, corpora_data, path, set_name, encoding='latin
     labeled_list = []
 
     with open(path+set_name+'_Oracle.txt', newline='', encoding=encoding) as oraclefile:
-        oracle_reader = csv.reader(oraclefile, delimiter=',')
+
+        oracle_queries = []
+        queries_found = dict([(filename, False) for filename in queries_data.keys()])
+
+        if set_name == 'kepler':
+            oracle_reader = csv.reader(oraclefile, delimiter=' ')
+        else:
+            oracle_reader = csv.reader(oraclefile, delimiter=',')
+            
+        correct_valid_links = 0
+        valid_links = 0
             
         for row in oracle_reader:
-            #print('hello')
+            
+            if not (row == [] or row == [''] or row == [' ']):
+                oracle_queries.append(row[0])
+                correct_valid_links += len(row[1:])
+
+            # Remove leading whitespace from values in oracle
+            for i in range(len(row)):
+                row[i] = row[i].lstrip()
+
             for query in queries_data.keys():
-                #print('world')
+                # eanci and itrust set have extensions in mapping files but not in oracle file
+                # we need to remove the extension so the comparisons will work
+                if set_name == 'eanci' or set_name == 'itrust':
+                    query = query.split('.')[0]
+
                 for token in row:                
                     # if the corpus filename is in the given oracle row
-                    if query in token or token in query:
+                    if query == token:
+                        # Update queries_found dict to indicate we have found code class in oracle
+                        if set_name == 'eanci' or set_name == 'itrust':
+                            queries_found[query+'.txt'] = True
+                        else:
+                            queries_found[query] = True
+
                         for corpus in corpora_data.keys():
+                            if set_name == 'eanci' or set_name == 'itrust':
+                                #corpus = corpus.rstrip('.txt')
+                                corpus = corpus.split('.')[0]
+
                             label = 0
-                            #print(corpus)
+
                             for token in row:
-                                #print(corpus, toke)
-                                #print('looking')
                                 # if the query filename is in the given oracle row update label
-                                if corpus in token or token.lstrip() in corpus:
-                                    #print('found')
+                                if corpus == token:
+                                    valid_links += 1
                                     label = 1
-                                    break 
-                            #return None                                   
+                                    break                                   
                                 
-                            # Clean filename string and shuffle CC+UC tokens
                             fname_str = query + '__' + corpus
-                            concat_tokens = queries_data[query] + corpora_data[corpus]
-                            random.shuffle(concat_tokens)
+
+                            # If we are working with eanci we need to add the extension back
+                            # Queries dict is keyed by filename+extension
+                            if set_name == 'eanci' or set_name == 'itrust':
+                                concat_tokens = queries_data[query+'.txt'] + corpora_data[corpus+'.txt']
+                            else:
+                                concat_tokens = queries_data[query] + corpora_data[corpus]
+
+                            # Shuffle and join CC+UC tokens
+                            shuffle(concat_tokens)
                             data_str = ' '.join(concat_tokens)
 
-                            # save filename, joined data, and label as a tuple in list   
+                            # Save filename, joined data, and label as a tuple in list   
                             labeled_list.append((fname_str, data_str, label))
                         break
+
+    print('\n***** METADOC LINKS *****\n')
+    print('There should be',correct_valid_links, 'valid links written.')
+    print('Valid links written:',valid_links)
+
+    not_found = 0
+    print('\n***** ORACLE QUERIES NOT IN MAP FILE *****\n')
+    for query in oracle_queries:
+        if query not in queries_data.keys():
+            print(query)
+            not_found += 1
+
+    print('\nTotal missing classes:', not_found)
+
+
+    not_found=0
+    # Generate metadocs for code classes not found in oracle file
+    print('\n***** MAPPED QUERIES NOT IN ORACLE *****\n')
+    for query, found in queries_found.items():
+        if not found:
+            print(query)
+            not_found += 1
+            for corpus in corpora_data.keys():
+                fname_str = query + '__' + corpus
+
+                concat_tokens = queries_data[query] + corpora_data[corpus]
+                # Shuffle and join CC+UC tokens
+                shuffle(concat_tokens)
+                data_str = ' '.join(concat_tokens)
+
+                # save filename, joined data, and label as a tuple in list   
+                labeled_list.append((fname_str, data_str, 0))
+
+    print('\nTotal missing classes:', not_found)
 
     return labeled_list
 
@@ -136,26 +201,42 @@ if __name__ == "__main__":
 
     # dictionary of lists of tokens keyed by filename
     corpora_data, queries_data = load_data(sys.argv[1], sys.argv[2])
-    print(len(corpora_data) * len(queries_data))
+    
 
-
-    # user_input = input('Please select stemming algorithm (porter or snowball): ')
-    # user_input = user_input.lower()
-
-    # clean each code class' tokenized list
+    # Clean each code class' tokenized list
+    print('\n***** CLEANING CORPORA TOKEN LISTS*****\n')
     for corpus in corpora_data.keys():
+        if len(corpora_data[corpus]) == 0:
+            print(corpus, 'empty before clean')
+
         corpora_data[corpus] = remove_stopwords(corpora_data[corpus], all_stopwords)
         corpora_data[corpus] = remove_num_punct(corpora_data[corpus])
         corpora_data[corpus] = stem(corpora_data[corpus])
 
+        if len(corpora_data[corpus]) == 0:
+            print(corpus, 'empty after clean')
+
     # clean each use case's tokenized list
+    print('\n***** CLEANING QUERIES TOKEN LISTS*****\n')
     for query in queries_data.keys():
+        if len(queries_data[query]) == 0:
+            print(query, 'empty before clean')
+
         queries_data[query] = remove_stopwords(queries_data[query], all_stopwords)
         queries_data[query] = remove_num_punct(queries_data[query])
         queries_data[query] = stem(queries_data[query])
 
+        if len(queries_data[query]) == 0:
+            print(query, 'empty after clean')
+
+    # Create metadocs
     output_list = concatenate_data(queries_data, corpora_data, sys.argv[1], sys.argv[2])
 
+    print('\n***** METADOC FILES *****\n')
+    print('There should be', len(corpora_data) * len(queries_data), 'metadocs generated.')
+    print('Metadocs generated: ', len(output_list))
+
+    # Write metadoc filenames, data, and labels to files
     with open('data/'+sys.argv[2]+'_filenames.txt', 'w', newline='') as fnfile:
         filename_writer = csv.writer(fnfile, quoting=csv.QUOTE_MINIMAL)
 
