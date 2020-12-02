@@ -18,6 +18,7 @@ tensorflow-addons = "*"
 matplotlib = "*"
 sklearn = "*"
 pandas = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.8"
