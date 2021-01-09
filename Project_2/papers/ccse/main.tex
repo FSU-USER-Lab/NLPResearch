@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.0in]{geometry}
+
+\title{Automating Software Traceability Link Recovery and Maintenance using Word Embeddings within a Shallow Neural Network}
+\author{Author: Marlan McInnes-Taylor\\Co-Author: Dr. Chris Mills\\Florida State University Department of Computer Science\\1017 Academic Way, Tallahassee, FL 32304\\mcinnest@cs.fsu.edu, crmills@fsu.edu}
+
+\date{}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Abstract}
+This research explores automating the process of software traceability link recovery and maintenance using modern artificial intelligence and data preprocessing techniques. The results demonstrate that, given appropriate hyperparameters, a shallow neural network can accurately and precisely predict which text-based artifacts within a software system are related.
+
+\section{Introduction}
+    Previous studies have shown that access to traceability information explaining relationships between software artifacts in a system leads to better software quality and lower bug counts. This is largely credited to such information improving fundamental software engineering tasks such as program comprehension, concept and bug localization, and defect prediction among many others \cite{bouillon2013survey, mader2015developers, mader2016preventing}. Unfortunately, the aquisition of traceability information is difficult and typically an afterthought during system construction. Further, when using a manual process to establish traceability, hundreds or thousands of man hours are spent infering relationships between artifacts that are constantly in flux as the system changes during development and manintenace \cite{james1997automatic, weidenhaupt1998scenarios, antoniol2000traceability}. Therefore, even if a firm is able to establish traceability for a mission critical system, the effectiveness of that information is potentially temporary. To address this situation, previous studies have attempted to either completely or partially automate the process of inferring traceability links between system components \cite{borg2014recovering}. In this work, we continue that research agenda by using neural networks to model links between text-based software artifacts and predict which of those links are valid -- meaning that the link exists between two related artifacts within the software system. Preliminary results of using this technique are promising, with higher recall and precision than its contemporaries \cite{mills2018automatic, mills2019tracing}.
+
+\section{Materials and Methods}
+    The training and test data were comprised of the Albergate, Eanci, eTour, iTrust, Modis, and SMOS datasets. All code was written in Python. 
+    
+\subsection{Data Cleaning}
+    All document text was first tokenized using NLTK's\citep{BirdKleinLoper09} punkt tokenizer. The documents were cleaned by removing stopwords. NLTK's built in stopwords list was used as a basis, with a collection of Java and C stopwords appended to it. The documents were further cleaned by removing whitespace, punctuation, and purely numeric tokens. 
+
+\subsection{Metadocument Generation}
+    Metadocuments were created using the cleaned data from each dataset. Every metadocument was comprised of text data associated with a use case (UC) and a code class (CC), and metadocuments were created for all possible combinations of a dataset's UCs and CCs. Additionally, the text of each metadocument was randomly shuffled using the Numpy's\citep{harris2020array} shuffle method, in order to reduce potential bias from token arrangement when setting the sequence length. Finally, each metadocument was classified as either a valid link between two related documents or an invalid link between two unrelated documents, as specified in each dataset's oracle file.
+
+\subsection{Dataset Balancing}
+    Class imbalance was present in all datasets due to the large number of possible UC and CC combinations. As one might expect, for a given system, there are far fewer metadaocuments representing valid links than invalid ones. To prevent class imbalance from impacting model performance, each dataset was balanced using Imbalanced-Learn's\citep{JMLR:v18:16-365} SMOTE implementation. Due to the SMOTE parameters, all metadocuments within the set were pruned to a uniform length before synthetic metadocuments were created. The average length of all metadocuments within the set was used for pruning. Synthetic metadocument generation resulted in an equal number of valid and invalid links within each dataset.
+
+\subsection{Model Design and Training}
+    A shallow Tensorflow\citep{abadi2016tensorflow} model was implemented to perform metadocument classification. The model's first two layers performed text vectorization and transformed the vectors using word embeddings. The vectors were then pooled before being passed into a 16 node dense layer followed by the output layer. Initial positive results on the SMOS dataset led to 50 trials of 10 fold cross validation with 15 epochs per fold on each dataset. Shuffled stratification via scikit-learn's\citep{sklearn_api} StratifiedShuffleSplit implementation was used to sample the dataset in each fold. 
+
+\section{Results}
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c|c|c| } 
+         \hline
+         \textbf{Dataset} & \textbf{Loss} & \textbf{Accuracy} & \textbf{Recall} & \textbf{Precision} & \textbf{F1Score} \\ 
+         \hline
+         Albergate & 0.28 & 0.95 & 0.91 & 0.98 & 0.94 \\ 
+         \hline
+         Eanci & 0.11 & 0.96 & 0.94 & 0.98 & 0.96 \\ 
+         \hline
+         Etour & 0.13 & 0.96 & 0.93 & 0.99 & 0.96 \\ 
+         \hline
+         iTrust & 0.17 & 0.97 & 0.95 & 0.99 & 0.97 \\ 
+         \hline
+         Modis & 0.29 & 0.93 & 0.94 & 0.92 & 0.93 \\ 
+         \hline
+         SMOS & 0.33 & 0.87 & 0.75 & 0.98 & 0.85 \\ 
+         \hline
+        \end{tabular}
+    \end{center}
+    
+\section{Conclusions and Future Work}
+    Given the strong precision and recall results, it is clear that word embeddings used within a shallow network can successfully perform metadocument link classification within a defined training and testing environment. Future work will focus on improving this model by further optimizing its hyperparameters. To make the model more appealing to industrial partners, we plan to determine ways to minimize the start-up cost associated with employing our model to establish traceability information in a greenfield system. Initially, we plan to perform a series of experiments to identify the minimum data requirements for a given level of performance while employing supportive techniques such as Active Learning.  Further, we will focus our efforts on using filtered data from disparate software systems to create a generalizable model for initial traceability link recovery with limited or absent within-project data. 
+    
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
