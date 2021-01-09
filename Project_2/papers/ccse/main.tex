@@ -3,7 +3,7 @@
 \usepackage[margin=1.0in]{geometry}
 
 \title{Automating Software Traceability Link Recovery and Maintenance using Word Embeddings within a Shallow Neural Network}
-\author{Author: Marlan McInnes-Taylor\\Co-Author: Dr. Chris Mills\\Florida State University Department of Computer Science\\1017 Academic Way, Tallahassee, FL 32304\\mcinnest@cs.fsu.edu, crmills@fsu.edu}
+\author{Marlan McInnes-Taylor\\Faculty Mentor: Dr. Chris Mills\\Florida State University Department of Computer Science\\1017 Academic Way, Tallahassee, FL 32304\\mcinnest@cs.fsu.edu, crmills@fsu.edu}
 
 \date{}
 
@@ -15,7 +15,7 @@
 \maketitle
 
 \section{Abstract}
-This research explores automating the process of software traceability link recovery and maintenance using modern artificial intelligence and data preprocessing techniques. The results demonstrate that, given appropriate hyperparameters, a shallow neural network can accurately and precisely predict which text-based artifacts within a software system are related.
+In addition to code, software systems contain a multitude of files documenting features, known issues, legal requirements, etc. Software traceability is the ability to link related documents from these various sets through a process called \textit{traceability link recovery}. While previous research has shown that established software traceability improves the quality of projects and makes them easier to maintain, establishing software traceability is often a manual, arduous, and error prone task. This research explores automating the process of software traceability link recovery using established techniques in machine learning. The results demonstrate that even with minimally tuned hyperparameters a shallow neural network can effectively predict which text-based artifacts within a software system are related to one another.
 
 \section{Introduction}
     Previous studies have shown that access to traceability information explaining relationships between software artifacts in a system leads to better software quality and lower bug counts. This is largely credited to such information improving fundamental software engineering tasks such as program comprehension, concept and bug localization, and defect prediction among many others \cite{bouillon2013survey, mader2015developers, mader2016preventing}. Unfortunately, the aquisition of traceability information is difficult and typically an afterthought during system construction. Further, when using a manual process to establish traceability, hundreds or thousands of man hours are spent infering relationships between artifacts that are constantly in flux as the system changes during development and manintenace \cite{james1997automatic, weidenhaupt1998scenarios, antoniol2000traceability}. Therefore, even if a firm is able to establish traceability for a mission critical system, the effectiveness of that information is potentially temporary. To address this situation, previous studies have attempted to either completely or partially automate the process of inferring traceability links between system components \cite{borg2014recovering}. In this work, we continue that research agenda by using neural networks to model links between text-based software artifacts and predict which of those links are valid -- meaning that the link exists between two related artifacts within the software system. Preliminary results of using this technique are promising, with higher recall and precision than its contemporaries \cite{mills2018automatic, mills2019tracing}.

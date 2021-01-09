@@ -1,0 +1,100 @@
+\begin{thebibliography}{10}
+
+\bibitem{abadi2016tensorflow}
+Mart{\'\i}n Abadi, Paul Barham, Jianmin Chen, Zhifeng Chen, Andy Davis, Jeffrey
+  Dean, Matthieu Devin, Sanjay Ghemawat, Geoffrey Irving, Michael Isard, et~al.
+\newblock Tensorflow: A system for large-scale machine learning.
+\newblock In {\em 12th $\{$USENIX$\}$ Symposium on Operating Systems Design and
+  Implementation ($\{$OSDI$\}$ 16)}, pages 265--283, 2016.
+
+\bibitem{antoniol2000traceability}
+Giuliano Antoniol, C~Casazza, and Aniello Cimitile.
+\newblock Traceability recovery by modeling programmer behavior.
+\newblock In {\em Proceedings of the Seventh Working Conference on Reverse
+  Engineering}, pages 240--247. IEEE, 2000.
+
+\bibitem{BirdKleinLoper09}
+Steven Bird, Ewan Klein, and Edward Loper.
+\newblock {\em {Natural Language Processing with Python}}.
+\newblock O'Reilly Media, 2009.
+
+\bibitem{borg2014recovering}
+Markus Borg, Per Runeson, and Anders Ard{\"o}.
+\newblock Recovering from a decade: A systematic mapping of information
+  retrieval approaches to software traceability.
+\newblock {\em Empirical Software Engineering}, 19(6):1565--1616, 2014.
+
+\bibitem{bouillon2013survey}
+Elke Bouillon, Patrick M{\"a}der, and Ilka Philippow.
+\newblock A survey on usage scenarios for requirements traceability in
+  practice.
+\newblock In {\em International Working Conference on Requirements Engineering:
+  Foundation for Software Quality}, pages 158--173. Springer, 2013.
+
+\bibitem{sklearn_api}
+Lars Buitinck, Gilles Louppe, Mathieu Blondel, Fabian Pedregosa, Andreas
+  Mueller, Olivier Grisel, Vlad Niculae, Peter Prettenhofer, Alexandre
+  Gramfort, Jaques Grobler, Robert Layton, Jake VanderPlas, Arnaud Joly, Brian
+  Holt, and Ga{\"{e}}l Varoquaux.
+\newblock {API} design for machine learning software: experiences from the
+  scikit-learn project.
+\newblock In {\em ECML PKDD Workshop: Languages for Data Mining and Machine
+  Learning}, pages 108--122, 2013.
+
+\bibitem{harris2020array}
+Charles~R. Harris, K.~Jarrod Millman, St{'{e}}fan~J. van~der Walt, Ralf
+  Gommers, Pauli Virtanen, David Cournapeau, Eric Wieser, Julian Taylor,
+  Sebastian Berg, Nathaniel~J. Smith, Robert Kern, Matti Picus, Stephan Hoyer,
+  Marten~H. van Kerkwijk, Matthew Brett, Allan Haldane, Jaime~Fern{'{a}}ndez
+  del R{'{\i}}o, Mark Wiebe, Pearu Peterson, Pierre G{'{e}}rard-Marchant, Kevin
+  Sheppard, Tyler Reddy, Warren Weckesser, Hameer Abbasi, Christoph Gohlke, and
+  Travis~E. Oliphant.
+\newblock Array programming with {NumPy}.
+\newblock {\em Nature}, 585(7825):357--362, September 2020.
+
+\bibitem{james1997automatic}
+Laurence James.
+\newblock Automatic requirements specification update processing from a
+  requirements management tool perspective.
+\newblock In {\em Proceedings of the International Conference and Workshop on
+  Engineering of Computer-Based Systems}, pages 2--9. IEEE, 1997.
+
+\bibitem{JMLR:v18:16-365}
+Guillaume Lema{{\^i}}tre, Fernando Nogueira, and Christos~K. Aridas.
+\newblock Imbalanced-learn: A python toolbox to tackle the curse of imbalanced
+  datasets in machine learning.
+\newblock {\em Journal of Machine Learning Research}, 18(17):1--5, 2017.
+
+\bibitem{mader2015developers}
+Patrick M{\"a}der and Alexander Egyed.
+\newblock Do developers benefit from requirements traceability when evolving
+  and maintaining a software system?
+\newblock {\em Empirical Software Engineering}, 20(2):413--441, 2015.
+
+\bibitem{mills2019tracing}
+Chris Mills, Javier Escobar-Avila, Aditya Bhattacharya, Grigoriy Kondyukov,
+  Shayok Chakraborty, and Sonia Haiduc.
+\newblock Tracing with less data: Active learning for classification-based
+  traceability link recovery.
+\newblock In {\em 2019 IEEE International Conference on Software Maintenance
+  and Evolution (ICSME)}, pages 103--113. IEEE, 2019.
+
+\bibitem{mills2018automatic}
+Chris Mills, Javier Escobar-Avila, and Sonia Haiduc.
+\newblock Automatic traceability maintenance via machine learning
+  classification.
+\newblock In {\em 2018 IEEE International Conference on Software Maintenance
+  and Evolution (ICSME)}, pages 369--380. IEEE, 2018.
+
+\bibitem{mader2016preventing}
+Patrick Rempel and Patrick Mader.
+\newblock Preventing defects: The impact of requirements traceability
+  completeness on software quality.
+\newblock {\em IEEE Transactions on Software Engineering}, 2016.
+
+\bibitem{weidenhaupt1998scenarios}
+Klaus Weidenhaupt, Klaus Pohl, Matthias Jarke, and Peter Haumer.
+\newblock Scenarios in system development: current practice.
+\newblock {\em IEEE Software}, 15(2):34--45, 1998.
+
+\end{thebibliography}
